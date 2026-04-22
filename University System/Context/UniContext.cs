@@ -11,61 +11,54 @@ namespace University_System.Context
         }
 
         public DbSet<Student> Students { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<StudentCourse> StudentCourses { get; set; }
+        public DbSet<CourseInstructor> CourseInstructors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Student>().HasData(
-                new Student
-                {
-                    Id = 1,
-                    SSN = "123-45-6789",
-                    Name = "Alice Johnson",
-                    Email = "alice.johnson@university.edu",
-                    Phone = "+1 (555) 101-2020",
-                    Address = "12 Maple Street, New York, NY 10001",
-                    Image = "https://randomuser.me/api/portraits/women/44.jpg"
-                },
-                new Student
-                {
-                    Id = 2,
-                    SSN = "987-65-4321",
-                    Name = "Bob Martinez",
-                    Email = "bob.martinez@university.edu",
-                    Phone = "+1 (555) 303-4040",
-                    Address = "45 Oak Avenue, Los Angeles, CA 90001",
-                    Image = "https://randomuser.me/api/portraits/men/32.jpg"
-                },
-                new Student
-                {
-                    Id = 3,
-                    SSN = "456-78-9012",
-                    Name = "Clara Smith",
-                    Email = "clara.smith@university.edu",
-                    Phone = "+1 (555) 505-6060",
-                    Address = "78 Pine Road, Chicago, IL 60601",
-                    Image = "https://randomuser.me/api/portraits/women/68.jpg"
-                },
-                new Student
-                {
-                    Id = 4,
-                    SSN = "321-54-8765",
-                    Name = "David Lee",
-                    Email = "david.lee@university.edu",
-                    Phone = "+1 (555) 707-8080",
-                    Address = "99 Birch Blvd, Houston, TX 77001",
-                    Image = "https://randomuser.me/api/portraits/men/75.jpg"
-                },
-                new Student
-                {
-                    Id = 5,
-                    SSN = "654-32-1987",
-                    Name = "Emma Wilson",
-                    Email = "emma.wilson@university.edu",
-                    Phone = "+1 (555) 909-1010",
-                    Address = "33 Cedar Lane, Phoenix, AZ 85001",
-                    Image = "https://randomuser.me/api/portraits/women/12.jpg"
-                }
-            );
+            // Student ↔ Course (M:N) — composite key
+            modelBuilder.Entity<StudentCourse>()
+                .HasKey(sc => new { sc.StudentId, sc.CourseId });
+
+            modelBuilder.Entity<StudentCourse>()
+                .HasOne(sc => sc.Student)
+                .WithMany(s => s.StudentCourses)
+                .HasForeignKey(sc => sc.StudentId);
+
+            modelBuilder.Entity<StudentCourse>()
+                .HasOne(sc => sc.Course)
+                .WithMany(c => c.StudentCourses)
+                .HasForeignKey(sc => sc.CourseId);
+
+            // Course ↔ Instructor (M:N) — composite key
+            modelBuilder.Entity<CourseInstructor>()
+                .HasKey(ci => new { ci.CourseId, ci.InstructorId });
+
+            modelBuilder.Entity<CourseInstructor>()
+                .HasOne(ci => ci.Course)
+                .WithMany(c => c.CourseInstructors)
+                .HasForeignKey(ci => ci.CourseId);
+
+            modelBuilder.Entity<CourseInstructor>()
+                .HasOne(ci => ci.Instructor)
+                .WithMany(i => i.CourseInstructors)
+                .HasForeignKey(ci => ci.InstructorId);
+
+            // Department → Instructor (1:M)
+            modelBuilder.Entity<Instructor>()
+                .HasOne(i => i.Department)
+                .WithMany(d => d.Instructors)
+                .HasForeignKey(i => i.DepartmentId);
+
+
+            // Department → Student (1:M)
+            modelBuilder.Entity<Student>()
+                .HasOne(s => s.Department)
+                .WithMany(d => d.Students)
+                .HasForeignKey(s => s.DepartmentId);
         }
     }
 }
