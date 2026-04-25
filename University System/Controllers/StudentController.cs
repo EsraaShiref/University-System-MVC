@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using University_System.Context;
-using University_System.Models;
 
 namespace University_System.Controllers
 {
@@ -10,15 +9,22 @@ namespace University_System.Controllers
         UniContext db = new UniContext();
         public IActionResult Index()
         {
-            var allStds = db.Students.ToList();
-            return View("Index",allStds);
+            var students = db.Students
+    .Include(s => s.Department)
+    .Include(s => s.StudentCourses)
+    .ToList();
+            return View("Index", students);
         }
 
 
         public IActionResult Details(int id)
         {
 
-            var student = db.Students.FirstOrDefault(s => s.Id == id);
+            var student = db.Students
+                                 .Include(s => s.Department)
+                                 .Include(s => s.StudentCourses)
+                                     .ThenInclude(sc => sc.Course)
+                                 .FirstOrDefault(s => s.Id == id);
             return View("Details", student);
 
         }

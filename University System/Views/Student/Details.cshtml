@@ -2,28 +2,250 @@
 
 @{
     ViewData["Title"] = "Student Details";
+    var courseCount = Model.StudentCourses?.Count ?? 0;
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow border-0" style="border-radius: 15px; overflow: hidden;">
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Student Profile</h1>
+        <p class="page-subtitle">Full information for @Model.Name</p>
+    </div>
+    <div class="ms-auto d-flex gap-2">
+        <a asp-controller="Student" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to List
+        </a>
+        <button class="btn btn-primary btn-sm" disabled>
+            <i class="bi bi-pencil me-1"></i> Edit Profile
+        </button>
+    </div>
+</div>
 
-                <img src="@Model.Image" class="card-img-top" alt="@Model.Name" style="height: 320px; object-fit: contain;">
+<div class="row g-4">
 
-                <div class="card-body">
-                    <h4 class="card-title fw-bold text-center mb-3">@Model.Name</h4>
+    <!-- ======= LEFT: Profile Card ======= -->
+    <div class="col-lg-4">
+        <div class="content-card text-center py-4">
 
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>🆔 SSN:</strong> @Model.SSN</li>
-                        <li class="list-group-item"><strong>📧 Email:</strong> @Model.Email</li>
-                        <li class="list-group-item"><strong>📞 Phone:</strong> @Model.Phone</li>
-                        <li class="list-group-item"><strong>📍 Address:</strong> @Model.Address</li>
-                    <div class="d-grid gap-2 mt-4">
-                        <a href="/Student/Index" class="btn btn-secondary shadow-sm">Back to Student List</a>
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <img src="@Url.Content("~/images/" + Model.Image)" class="profile-avatar mx-auto d-block mb-3" alt="@Model.Name" />
+            }
+            else
+            {
+                <div class="profile-avatar-placeholder mx-auto mb-3">
+                    @(Model.Name?.Substring(0, 1).ToUpper())
+                </div>
+            }
+
+            <h4 class="fw-bold mb-1">@Model.Name</h4>
+            <p class="text-muted mb-2">
+                Student ID: <span class="badge bg-light text-dark">#@Model.Id</span>
+            </p>
+
+            <!-- Department Badge -->
+            @if (Model.Department != null)
+            {
+                <span class="dept-badge mb-2 d-inline-flex">
+                    <i class="bi bi-building me-1"></i>@Model.Department.Name
+                </span>
+            }
+            else
+            {
+                <span class="text-muted small d-block mb-2">No department assigned</span>
+            }
+
+            <span class="status-badge status-badge--active mb-3 d-inline-block">Active Student</span>
+
+            <div class="profile-divider my-3"></div>
+
+            <!-- Contact Info -->
+            <div class="profile-meta">
+                <div class="profile-meta-item">
+                    <i class="bi bi-envelope text-primary"></i>
+                    <span class="small text-muted">@Model.Email</span>
+                </div>
+                <div class="profile-meta-item">
+                    <i class="bi bi-telephone text-primary"></i>
+                    <span class="small text-muted">@Model.Phone</span>
+                </div>
+                <div class="profile-meta-item">
+                    <i class="bi bi-geo-alt text-primary"></i>
+                    <span class="small text-muted">@Model.Address</span>
+                </div>
+            </div>
+
+            <div class="profile-divider my-3"></div>
+
+            <!-- Quick Stats -->
+            <div class="d-flex justify-content-around px-2">
+                <div class="text-center">
+                    <div class="fw-bold fs-5 text-primary">@courseCount</div>
+                    <div class="text-muted" style="font-size:11px;">Courses</div>
+                </div>
+                <div class="text-center">
+                    <div class="fw-bold fs-5 text-success">Active</div>
+                    <div class="text-muted" style="font-size:11px;">Status</div>
+                </div>
+                <div class="text-center">
+                    <div class="fw-bold fs-5 text-warning">
+                        @(Model.Department?.Name?.Substring(0, Math.Min(3, Model.Department.Name.Length)).ToUpper() ?? "—")
+                    </div>
+                    <div class="text-muted" style="font-size:11px;">Dept.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======= RIGHT: Details ======= -->
+    <div class="col-lg-8 d-flex flex-column gap-4">
+
+        <!-- Personal Information -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <h5 class="content-card-title">
+                    <i class="bi bi-person-badge me-2 text-primary"></i>Personal Information
+                </h5>
+            </div>
+            <div class="row g-0">
+                <div class="col-sm-6">
+                    <div class="info-field">
+                        <label class="info-label">Full Name</label>
+                        <div class="info-value">@Model.Name</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="info-field">
+                        <label class="info-label">SSN</label>
+                        <div class="info-value">
+                            <i class="bi bi-shield-lock text-muted me-1 small"></i>
+                            <span class="text-muted" title="@Model.SSN">
+                                ••• @Model.SSN?.Substring(Model.SSN.Length - 4)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="info-field">
+                        <label class="info-label">Email Address</label>
+                        <div class="info-value">
+                            <a href="mailto:@Model.Email" class="text-decoration-none text-primary">@Model.Email</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="info-field">
+                        <label class="info-label">Phone Number</label>
+                        <div class="info-value">@Model.Phone</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="info-field">
+                        <label class="info-label">Department</label>
+                        <div class="info-value">
+                            @if (Model.Department != null)
+                            {
+                                <span class="dept-badge">
+                                    <i class="bi bi-building me-1"></i>@Model.Department.Name
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="info-field">
+                        <label class="info-label">Student ID</label>
+                        <div class="info-value">#@Model.Id</div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="info-field" style="border-bottom:none;">
+                        <label class="info-label">Address</label>
+                        <div class="info-value">@Model.Address</div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Enrolled Courses -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <h5 class="content-card-title">
+                    <i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>Enrolled Courses
+                </h5>
+                <span class="ms-auto courses-badge">
+                    <i class="bi bi-collection me-1"></i>
+                    @courseCount Course@(courseCount != 1 ? "s" : "")
+                </span>
+            </div>
+
+            @if (Model.StudentCourses != null && Model.StudentCourses.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table uni-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Course Name</th>
+                                <th>Grade</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int rowNum = 1; }
+                            @foreach (var sc in Model.StudentCourses)
+                            {
+                                var gradeVal = sc.Grade;
+                                string gradeCss, gradeLabel;
+
+                                if (gradeVal >= 90)      { gradeCss = "a"; gradeLabel = "A"; }
+                                else if (gradeVal >= 80) { gradeCss = "b"; gradeLabel = "B"; }
+                                else if (gradeVal >= 70) { gradeCss = "c"; gradeLabel = "C"; }
+                                else if (gradeVal >= 60) { gradeCss = "d"; gradeLabel = "D"; }
+                                else                     { gradeCss = "f"; gradeLabel = "F"; }
+
+                                bool passed = gradeVal >= 60;
+                                <tr>
+                                    <td class="text-muted small">@(rowNum++)</td>
+                                    <td class="fw-semibold">@sc.Course?.Name</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="grade-badge grade-badge--@gradeCss">@gradeLabel</span>
+                                            <span class="text-muted small">@gradeVal.ToString("0.0")</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (passed)
+                                        {
+                                            <span class="status-badge status-badge--active">
+                                                <i class="bi bi-check2 me-1"></i>Passed
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge status-badge--inactive">
+                                                <i class="bi bi-x me-1"></i>Failed
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-courses-state">
+                    <i class="bi bi-journal-x empty-courses-icon"></i>
+                    <p class="empty-courses-text">No courses enrolled yet.</p>
+                </div>
+            }
+        </div>
+
     </div>
 </div>
