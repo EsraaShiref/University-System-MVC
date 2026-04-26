@@ -10,6 +10,7 @@ namespace University_System.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
+        public int Age { get; set; }
         public string? Image { get; set; }  // path stored in DB
 
 
@@ -17,7 +18,7 @@ namespace University_System.Models
         public IFormFile? ImageFile { get; set; }  // الصورة اللي بتجي من الـ Form
         // FK → Department (M:1)
         public int DepartmentId { get; set; }
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
 
         // M:N → Course
         public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();

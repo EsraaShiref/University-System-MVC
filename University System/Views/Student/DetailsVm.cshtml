@@ -1,8 +1,8 @@
-﻿@model University_System.Models.Student
+﻿@model University_System.ViewModels.StudentDetailsVM
 
 @{
     ViewData["Title"] = "Student Details";
-    var courseCount = Model.StudentCourses?.Count ?? 0;
+    var courseCount = Model.Courses?.Count ?? 0;
 }
 
 <!-- Page Header -->
@@ -34,20 +34,20 @@
             else
             {
                 <div class="profile-avatar-placeholder mx-auto mb-3">
-                    @(Model.Name?.Substring(0, 1).ToUpper())
+                    @(Model.Name?.Substring(0, 1).ToUpper() ?? "?")
                 </div>
             }
 
             <h4 class="fw-bold mb-1">@Model.Name</h4>
             <p class="text-muted mb-2">
-                Student ID: <span class="badge bg-light text-dark">#@Model.Id</span>
+                Age: <span class="badge bg-light text-dark">@Model.Age years old</span>
             </p>
 
             <!-- Department Badge -->
-            @if (Model.Department != null)
+            @if (!string.IsNullOrEmpty(Model.DepartmentName))
             {
                 <span class="dept-badge mb-2 d-inline-flex">
-                    <i class="bi bi-building me-1"></i>@Model.Department.Name
+                    <i class="bi bi-building me-1"></i>@Model.DepartmentName
                 </span>
             }
             else
@@ -64,10 +64,6 @@
                 <div class="profile-meta-item">
                     <i class="bi bi-envelope text-primary"></i>
                     <span class="small text-muted">@Model.Email</span>
-                </div>
-                <div class="profile-meta-item">
-                    <i class="bi bi-telephone text-primary"></i>
-                    <span class="small text-muted">@Model.Phone</span>
                 </div>
                 <div class="profile-meta-item">
                     <i class="bi bi-geo-alt text-primary"></i>
@@ -89,7 +85,7 @@
                 </div>
                 <div class="text-center">
                     <div class="fw-bold fs-5 text-warning">
-                        @(Model.Department?.Name?.Substring(0, Math.Min(3, Model.Department.Name.Length)).ToUpper() ?? "—")
+                        @(Model.DepartmentName?.Substring(0, Math.Min(3, Model.DepartmentName.Length)).ToUpper() ?? "—")
                     </div>
                     <div class="text-muted" style="font-size:11px;">Dept.</div>
                 </div>
@@ -116,13 +112,8 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="info-field">
-                        <label class="info-label">SSN</label>
-                        <div class="info-value">
-                            <i class="bi bi-shield-lock text-muted me-1 small"></i>
-                            <span class="text-muted" title="@Model.SSN">
-                                ••• @Model.SSN?.Substring(Model.SSN.Length - 4)
-                            </span>
-                        </div>
+                        <label class="info-label">Age</label>
+                        <div class="info-value">@Model.Age years old</div>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -135,18 +126,12 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="info-field">
-                        <label class="info-label">Phone Number</label>
-                        <div class="info-value">@Model.Phone</div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="info-field">
                         <label class="info-label">Department</label>
                         <div class="info-value">
-                            @if (Model.Department != null)
+                            @if (!string.IsNullOrEmpty(Model.DepartmentName))
                             {
                                 <span class="dept-badge">
-                                    <i class="bi bi-building me-1"></i>@Model.Department.Name
+                                    <i class="bi bi-building me-1"></i>@Model.DepartmentName
                                 </span>
                             }
                             else
@@ -154,12 +139,6 @@
                                 <span class="text-muted">N/A</span>
                             }
                         </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="info-field">
-                        <label class="info-label">Age</label>
-                        <div class="info-value">@Model.Age years old</div>
                     </div>
                 </div>
                 <div class="col-12">
@@ -183,7 +162,7 @@
                 </span>
             </div>
 
-            @if (Model.StudentCourses != null && Model.StudentCourses.Any())
+            @if (Model.Courses != null && Model.Courses.Any())
             {
                 <div class="table-responsive">
                     <table class="table uni-table mb-0">
@@ -197,9 +176,9 @@
                         </thead>
                         <tbody>
                             @{ int rowNum = 1; }
-                            @foreach (var sc in Model.StudentCourses)
+                            @foreach (var course in Model.Courses)
                             {
-                                var gradeVal = sc.Grade;
+                                var gradeVal = course.Grade;
                                 string gradeCss, gradeLabel;
 
                                 if (gradeVal >= 90)      { gradeCss = "a"; gradeLabel = "A"; }
@@ -211,7 +190,7 @@
                                 bool passed = gradeVal >= 60;
                                 <tr>
                                     <td class="text-muted small">@(rowNum++)</td>
-                                    <td class="fw-semibold">@sc.Course?.Name</td>
+                                    <td class="fw-semibold">@course.CourseName</td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="grade-badge grade-badge--@gradeCss">@gradeLabel</span>

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using University_System.Context;
 using University_System.Models;
+using University_System.ViewModels;
 
 namespace University_System.Controllers
 {
@@ -11,9 +13,9 @@ namespace University_System.Controllers
         public IActionResult Index()
         {
             var students = db.Students
-    .Include(s => s.Department)
-    .Include(s => s.StudentCourses)
-    .ToList();
+                .Include(s => s.Department)
+                .Include(s => s.StudentCourses)
+                .ToList();
             return View("Index", students);
         }
 
@@ -30,14 +32,14 @@ namespace University_System.Controllers
 
         }
 
-        // GET — فتح الفورم
+        // GET 
         public IActionResult Add()
         {
             ViewBag.Departments = db.Departments.ToList();
             return View("AddStudent");
         }
 
-        // POST — استقبال البيانات وحفظها
+        // POST 
         [HttpPost]
         public IActionResult Add(Student student)
         {
@@ -67,6 +69,32 @@ namespace University_System.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+
+        public ActionResult Edit(int id)
+        {
+            var student = db.Students.Find(id);
+            if(student == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Departments = db.Departments.ToList();
+            return View(student);
+        }
+
+        public IActionResult DetailsVm(int id)
+        {
+            var student = db.Students
+                .Include(s => s.Department)
+                .Include(s => s.StudentCourses)
+                    .ThenInclude(sc => sc.Course)
+                .FirstOrDefault(s => s.Id == id);
+
+            if (student == null) return NotFound();
+
+            var vm = student.Adapt<StudentDetailsVM>();
+            return View(vm);
         }
     }
 }
