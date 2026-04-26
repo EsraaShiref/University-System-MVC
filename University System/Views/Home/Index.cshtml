@@ -1,6 +1,10 @@
 ﻿@model List<University_System.Models.Student>
 @{
-    ViewData["Title"] = "University System";
+    ViewData["Title"] = "Dashboard";
+    int studentCount    = ViewBag.StudentCount    ?? 0;
+    int deptCount       = ViewBag.DeptCount       ?? 0;
+    int courseCount     = ViewBag.CourseCount     ?? 0;
+    int instructorCount = ViewBag.InstructorCount ?? 0;
 }
 
 <!-- Page Header -->
@@ -10,69 +14,63 @@
         <p class="page-subtitle">Welcome back, Admin! Here's what's happening today.</p>
     </div>
     <div class="ms-auto d-flex gap-2">
-        <button class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-download me-1"></i> Export
-        </button>
-        <a asp-controller="Student" asp-action="Index" class="btn btn-primary btn-sm">
+        <a asp-controller="Department" asp-action="Add" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-building me-1"></i> Add Department
+        </a>
+        <a asp-controller="Student" asp-action="Add" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-lg me-1"></i> Add Student
         </a>
     </div>
 </div>
 
-<!-- Stats Cards -->
+<!-- Stats Cards (real data) -->
 <div class="row g-4 mb-4">
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card stat-card--blue">
-            <div class="stat-icon">
-                <i class="bi bi-people-fill"></i>
-            </div>
+            <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
             <div class="stat-body">
                 <p class="stat-label">Total Students</p>
-                <h3 class="stat-value">5</h3>
-                <span class="stat-badge stat-badge--up">
-                    <i class="bi bi-arrow-up-short"></i> 12% this month
-                </span>
+                <h3 class="stat-value">@studentCount</h3>
+                <a asp-controller="Student" asp-action="Index"
+                   class="stat-badge stat-badge--up text-decoration-none">
+                    <i class="bi bi-arrow-right-short"></i> View all
+                </a>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card stat-card--teal">
-            <div class="stat-icon">
-                <i class="bi bi-journal-bookmark-fill"></i>
-            </div>
+            <div class="stat-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
             <div class="stat-body">
-                <p class="stat-label">Active Courses</p>
-                <h3 class="stat-value">24</h3>
-                <span class="stat-badge stat-badge--up">
-                    <i class="bi bi-arrow-up-short"></i> 4 new this term
+                <p class="stat-label">Total Courses</p>
+                <h3 class="stat-value">@courseCount</h3>
+                <span class="stat-badge stat-badge--neutral">
+                    <i class="bi bi-dash"></i> This term
                 </span>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card stat-card--violet">
-            <div class="stat-icon">
-                <i class="bi bi-building"></i>
-            </div>
+            <div class="stat-icon"><i class="bi bi-building"></i></div>
             <div class="stat-body">
                 <p class="stat-label">Departments</p>
-                <h3 class="stat-value">8</h3>
-                <span class="stat-badge stat-badge--neutral">
-                    <i class="bi bi-dash"></i> No change
-                </span>
+                <h3 class="stat-value">@deptCount</h3>
+                <a asp-controller="Department" asp-action="Index"
+                   class="stat-badge stat-badge--neutral text-decoration-none">
+                    <i class="bi bi-arrow-right-short"></i> View all
+                </a>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card stat-card--orange">
-            <div class="stat-icon">
-                <i class="bi bi-person-check-fill"></i>
-            </div>
+            <div class="stat-icon"><i class="bi bi-person-workspace"></i></div>
             <div class="stat-body">
-                <p class="stat-label">Enrolled Today</p>
-                <h3 class="stat-value">3</h3>
+                <p class="stat-label">Instructors</p>
+                <h3 class="stat-value">@instructorCount</h3>
                 <span class="stat-badge stat-badge--up">
-                    <i class="bi bi-arrow-up-short"></i> Active
+                    <i class="bi bi-check2"></i> Active
                 </span>
             </div>
         </div>
@@ -81,14 +79,14 @@
 
 <!-- Middle Row -->
 <div class="row g-4 mb-4">
-    <!-- Recent Students -->
+    <!-- Recent Students (real from DB) -->
     <div class="col-lg-8">
         <div class="content-card">
             <div class="content-card-header">
                 <h5 class="content-card-title">
                     <i class="bi bi-people me-2 text-primary"></i>Recent Students
                 </h5>
-                <a asp-controller="Student" asp-action="Index" class="btn btn-sm btn-light">
+                <a asp-controller="Student" asp-action="Index" class="btn btn-sm btn-light ms-auto">
                     View All <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
@@ -97,166 +95,135 @@
                     <thead>
                         <tr>
                             <th>Student</th>
-                            <th>Contact</th>
+                            <th>Department</th>
+                            <th>Courses</th>
                             <th>Status</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center gap-3">
-                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" class="student-avatar" alt="Alice" />
-                                    <div>
-                                        <div class="fw-semibold">Alice Johnson</div>
-                                        <div class="text-muted small">alice.johnson@university.edu</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-muted small">+1 (555) 101-2020</td>
-                            <td><span class="status-badge status-badge--active">Active</span></td>
-                            <td>
-                                <a asp-controller="Student" asp-action="Details" asp-route-id="1" class="btn btn-sm btn-icon">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center gap-3">
-                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" class="student-avatar" alt="Bob" />
-                                    <div>
-                                        <div class="fw-semibold">Bob Martinez</div>
-                                        <div class="text-muted small">bob.martinez@university.edu</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-muted small">+1 (555) 303-4040</td>
-                            <td><span class="status-badge status-badge--active">Active</span></td>
-                            <td>
-                                <a asp-controller="Student" asp-action="Details" asp-route-id="2" class="btn btn-sm btn-icon">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center gap-3">
-                                    <img src="https://randomuser.me/api/portraits/women/68.jpg" class="student-avatar" alt="Clara" />
-                                    <div>
-                                        <div class="fw-semibold">Clara Smith</div>
-                                        <div class="text-muted small">clara.smith@university.edu</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-muted small">+1 (555) 505-6060</td>
-                            <td><span class="status-badge status-badge--active">Active</span></td>
-                            <td>
-                                <a asp-controller="Student" asp-action="Details" asp-route-id="3" class="btn btn-sm btn-icon">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var s in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            @if (!string.IsNullOrEmpty(s.Image))
+                                            {
+                                                <img src="@Url.Content("~/images/" + s.Image)"
+                                                     class="student-avatar" alt="@s.Name" />
+                                            }
+                                            else
+                                            {
+                                                <div class="student-avatar-placeholder">
+                                                    @(s.Name?.Substring(0, 1).ToUpper())
+                                                </div>
+                                            }
+                                            <div>
+                                                <div class="fw-semibold">@s.Name</div>
+                                                <div class="text-muted small">@s.Email</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (s.Department != null)
+                                        {
+                                            <span class="dept-badge">
+                                                <i class="bi bi-building me-1"></i>@s.Department.Name
+                                            </span>
+                                        }
+                                        else { <span class="text-muted small">—</span> }
+                                    </td>
+                                    <td>
+                                        @{ var cc = s.StudentCourses?.Count ?? 0; }
+                                        @if (cc > 0)
+                                        {
+                                            <span class="courses-badge">
+                                                <i class="bi bi-journal-bookmark me-1"></i>@cc
+                                            </span>
+                                        }
+                                        else { <span class="text-muted small">0</span> }
+                                    </td>
+                                    <td><span class="status-badge status-badge--active">Active</span></td>
+                                    <td>
+                                        <a asp-controller="Student" asp-action="Details"
+                                           asp-route-id="@s.Id" class="btn btn-sm btn-icon">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    No students found.
+                                    <a asp-controller="Student" asp-action="Add">Add one?</a>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Quick Stats / Activity -->
+    <!-- Quick Links -->
     <div class="col-lg-4">
         <div class="content-card h-100">
             <div class="content-card-header">
                 <h5 class="content-card-title">
-                    <i class="bi bi-activity me-2 text-primary"></i>Quick Stats
+                    <i class="bi bi-lightning-charge me-2 text-primary"></i>Quick Actions
                 </h5>
             </div>
-            <div class="quick-stats-list">
-                <div class="quick-stat-item">
-                    <div class="quick-stat-icon bg-blue-soft">
-                        <i class="bi bi-person-plus text-primary"></i>
+            <div class="p-3 d-flex flex-column gap-2">
+                <a asp-controller="Student" asp-action="Add"
+                   class="quick-action-btn">
+                    <div class="quick-action-icon bg-blue-soft">
+                        <i class="bi bi-person-plus-fill text-primary"></i>
                     </div>
                     <div>
-                        <div class="fw-semibold">New Enrollment</div>
-                        <div class="text-muted small">Alice Johnson enrolled today</div>
+                        <div class="fw-semibold">Enroll New Student</div>
+                        <div class="text-muted small">Add a student to the system</div>
                     </div>
-                    <span class="ms-auto text-muted small">Just now</span>
-                </div>
-                <div class="quick-stat-item">
-                    <div class="quick-stat-icon bg-teal-soft">
-                        <i class="bi bi-journal-check text-success"></i>
-                    </div>
-                    <div>
-                        <div class="fw-semibold">Course Update</div>
-                        <div class="text-muted small">Advanced Math updated</div>
-                    </div>
-                    <span class="ms-auto text-muted small">2h ago</span>
-                </div>
-                <div class="quick-stat-item">
-                    <div class="quick-stat-icon bg-orange-soft">
-                        <i class="bi bi-calendar-check text-warning"></i>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+                <a asp-controller="Department" asp-action="Add"
+                   class="quick-action-btn">
+                    <div class="quick-action-icon bg-violet-soft">
+                        <i class="bi bi-building-add text-purple"></i>
                     </div>
                     <div>
-                        <div class="fw-semibold">Schedule Change</div>
-                        <div class="text-muted small">Physics lab rescheduled</div>
+                        <div class="fw-semibold">Add Department</div>
+                        <div class="text-muted small">Create a new department</div>
                     </div>
-                    <span class="ms-auto text-muted small">5h ago</span>
-                </div>
-                <div class="quick-stat-item">
-                    <div class="quick-stat-icon bg-violet-soft">
-                        <i class="bi bi-award text-purple"></i>
-                    </div>
-                    <div>
-                        <div class="fw-semibold">Achievement</div>
-                        <div class="text-muted small">David Lee honor roll</div>
-                    </div>
-                    <span class="ms-auto text-muted small">1d ago</span>
-                </div>
-                <div class="quick-stat-item">
-                    <div class="quick-stat-icon bg-blue-soft">
-                        <i class="bi bi-envelope text-primary"></i>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+                <a asp-controller="Student" asp-action="Index"
+                   class="quick-action-btn">
+                    <div class="quick-action-icon bg-teal-soft">
+                        <i class="bi bi-people-fill text-success"></i>
                     </div>
                     <div>
-                        <div class="fw-semibold">New Message</div>
-                        <div class="text-muted small">Faculty meeting reminder</div>
+                        <div class="fw-semibold">View All Students</div>
+                        <div class="text-muted small">Browse the full student list</div>
                     </div>
-                    <span class="ms-auto text-muted small">2d ago</span>
-                </div>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+                <a asp-controller="Department" asp-action="Index"
+                   class="quick-action-btn">
+                    <div class="quick-action-icon bg-orange-soft">
+                        <i class="bi bi-diagram-3-fill text-warning"></i>
+                    </div>
+                    <div>
+                        <div class="fw-semibold">View Departments</div>
+                        <div class="text-muted small">Manage all departments</div>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bottom Row -->
-<div class="row g-4">
-    <div class="col-md-4">
-        <div class="content-card text-center py-4">
-            <div class="empty-icon mb-3">
-                <i class="bi bi-bar-chart-fill text-primary" style="font-size:2.5rem;"></i>
-            </div>
-            <h6 class="fw-bold">Analytics</h6>
-            <p class="text-muted small mb-3">View detailed performance reports and enrollment trends.</p>
-            <button class="btn btn-sm btn-outline-primary disabled">Coming Soon</button>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="content-card text-center py-4">
-            <div class="empty-icon mb-3">
-                <i class="bi bi-calendar3 text-teal" style="font-size:2.5rem;"></i>
-            </div>
-            <h6 class="fw-bold">Academic Calendar</h6>
-            <p class="text-muted small mb-3">Manage semesters, exams, and holidays in one place.</p>
-            <button class="btn btn-sm btn-outline-secondary disabled">Coming Soon</button>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="content-card text-center py-4">
-            <div class="empty-icon mb-3">
-                <i class="bi bi-mortarboard text-violet" style="font-size:2.5rem;"></i>
-            </div>
-            <h6 class="fw-bold">Graduation Tracker</h6>
-            <p class="text-muted small mb-3">Track credit hours and graduation requirements.</p>
-            <button class="btn btn-sm btn-outline-secondary disabled">Coming Soon</button>
         </div>
     </div>
 </div>

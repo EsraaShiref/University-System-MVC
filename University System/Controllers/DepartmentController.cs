@@ -10,7 +10,10 @@ namespace University_System.Controllers
         UniContext db = new UniContext();
         public IActionResult Index()
         {
-            var departments = db.Departments.ToList();
+            var departments =db.Departments
+                .Include(d => d.Students)
+                .Include(d => d.Instructors)
+                .ToList();
             return View(departments);
         }
         public IActionResult GetByName(string name)

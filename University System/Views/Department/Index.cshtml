@@ -1,47 +1,531 @@
 ﻿@model IEnumerable<University_System.Models.Department>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Departments";
+    var deptList = Model.ToList();
 }
 
-<h1>Index</h1>
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Departments</h1>
+        <p class="page-subtitle">Manage all university departments and their members.</p>
+    </div>
+    <div class="ms-auto">
+        <a asp-action="Add" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Add Department
+        </a>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Add">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DepartmentId">Edit</a> |
-                <a asp-action="GetByName" asp-route-name="@item.Name">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DepartmentId">Delete</a>
-            </td>
-        </tr>
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-md-3">
+        <div class="mini-stat-card">
+            <i class="bi bi-building mini-stat-icon text-primary"></i>
+            <div>
+                <div class="mini-stat-value">@deptList.Count</div>
+                <div class="mini-stat-label">Total Departments</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="mini-stat-card">
+            <i class="bi bi-people-fill mini-stat-icon text-success"></i>
+            <div>
+                <div class="mini-stat-value">@deptList.Sum(d => d.Students?.Count ?? 0)</div>
+                <div class="mini-stat-label">Total Students</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="mini-stat-card">
+            <i class="bi bi-person-workspace mini-stat-icon text-warning"></i>
+            <div>
+                <div class="mini-stat-value">@deptList.Sum(d => d.Instructors?.Count ?? 0)</div>
+                <div class="mini-stat-label">Total Instructors</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="mini-stat-card">
+            <i class="bi bi-geo-alt-fill mini-stat-icon" style="color:var(--orange);"></i>
+            <div>
+                <div class="mini-stat-value">@deptList.Select(d => d.Location).Distinct().Count()</div>
+                <div class="mini-stat-label">Locations</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Department Cards Grid - Compact Layout -->
+@if (deptList.Any())
+{
+    <div class="row g-3 mb-4">
+        @foreach (var dept in deptList)
+        {
+            <div class="col-sm-6 col-md-6 col-lg-3">
+                <div class="dept-card card-hover">
+                    <!-- Card Header -->
+                    <div class="dept-card-header">
+                        <div class="header-content">
+                            <div class="dept-card-icon">
+                                <i class="bi bi-building-fill"></i>
+                            </div>
+                            <div class="dept-info-header">
+                                <h5 class="dept-card-name">@dept.Name</h5>
+                                @* <p class="dept-card-id">#@dept.DepartmentId</p> *@
+                            </div>
+                        </div>
+                        <div class="dept-card-actions">
+                            <a asp-action="Edit" asp-route-id="@dept.DepartmentId"
+                               class="action-btn edit-btn" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@dept.DepartmentId"
+                               class="action-btn delete-btn" title="Delete"
+                               onclick="return confirm('Delete @dept.Name?')">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="dept-card-body">
+                        <!-- Location -->
+                        <div class="info-row">
+                            <div class="info-icon location-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Location</span>
+                                <span class="info-value">@dept.Location</span>
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="info-row">
+                            <div class="info-icon phone-icon">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Phone</span>
+                                <span class="info-value">@dept.PhoneNumber</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Stats -->
+                    <div class="dept-card-stats">
+                        <div class="stat-box students">
+                            <div class="stat-icon">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">@(dept.Students?.Count ?? 0)</span>
+                                <span class="stat-name">Students</span>
+                            </div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-box instructors">
+                            <div class="stat-icon">
+                                <i class="bi bi-person-workspace"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">@(dept.Instructors?.Count ?? 0)</span>
+                                <span class="stat-name">Instructors</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="dept-card-footer">
+                        <a asp-action="GetByName" asp-route-name="@dept.Name"
+                           class="view-details-btn">
+                            View Details <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="content-card">
+        <div class="empty-courses-state py-5">
+            <i class="bi bi-building-x empty-courses-icon"></i>
+            <p class="empty-courses-text">No departments found.</p>
+            <a asp-action="Add" class="btn btn-primary btn-sm mt-2">
+                <i class="bi bi-plus-lg me-1"></i> Add First Department
+            </a>
+        </div>
+    </div>
+}
+
+<style>
+    /* ====== ROOT VARIABLES ====== */
+    :root {
+        --primary: #0d6efd;
+        --primary-light: #e7f1ff;
+        --success: #198754;
+        --warning: #ffc107;
+        --danger: #dc3545;
+        --light: #f8f9fa;
+        --text-dark: #1f2937;
+        --text-muted: #6b7280;
+        --radius: 12px;
+        --trans: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ====== CARD MAIN ====== */
+    .dept-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: var(--radius);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        transition: var(--trans);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .dept-card.card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(13, 110, 253, 0.12);
+        border-color: var(--primary);
+    }
+
+    /* ====== HEADER ====== */
+    .dept-card-header {
+        padding: 14px 14px;
+        background: #f9fbfd;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .dept-card-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(13, 110, 253, 0.25);
+    }
+
+    .dept-info-header {
+        min-width: 0;
+    }
+
+    .dept-card-name {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin: 0 0 2px 0;
+        word-break: break-word;
+        letter-spacing: -0.3px;
+        line-height: 1.15;
+    }
+
+    .dept-card-id {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin: 0;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+    }
+
+    .dept-card-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .action-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 7px;
+        border: none;
+        background: #e5e7eb;
+        color: var(--text-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        transition: var(--trans);
+        text-decoration: none;
+    }
+
+    .action-btn:hover {
+        transform: scale(1.08);
+    }
+
+    .action-btn.edit-btn:hover {
+        background: #cfe2ff;
+        color: var(--primary);
+    }
+
+    .action-btn.delete-btn:hover {
+        background: #f8d7da;
+        color: var(--danger);
+    }
+
+    /* ====== BODY ====== */
+    .dept-card-body {
+        padding: 14px 14px;
+        flex: 1;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .info-row:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .info-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .info-icon.location-icon {
+        background: #fef3c7;
+        color: #f59e0b;
+    }
+
+    .info-icon.phone-icon {
+        background: #dbeafe;
+        color: #3b82f6;
+    }
+
+    .info-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .info-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-dark);
+        letter-spacing: -0.2px;
+        word-break: break-word;
+    }
+
+    /* ====== STATS ====== */
+    .dept-card-stats {
+        display: flex;
+        align-items: center;
+        padding: 12px 14px;
+        background: #f9fbfd;
+        border-top: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
+        gap: 0;
+    }
+
+    .stat-box {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    .stat-divider {
+        width: 1px;
+        height: 40px;
+        background: #e5e7eb;
+    }
+
+    .stat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .stat-box.students .stat-icon {
+        background: #d1fae5;
+        color: var(--success);
+    }
+
+    .stat-box.instructors .stat-icon {
+        background: #fed7aa;
+        color: var(--warning);
+    }
+
+    .stat-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        min-width: 0;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 18px;
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1;
+        letter-spacing: -0.6px;
+    }
+
+    .stat-name {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    /* ====== FOOTER ====== */
+    .dept-card-footer {
+        padding: 12px 14px;
+        background: var(--light);
+    }
+
+    .view-details-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--primary);
+        border: 1.5px solid var(--primary);
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
+        transition: var(--trans);
+        text-decoration: none;
+        letter-spacing: 0.2px;
+    }
+
+    .view-details-btn:hover {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+        transform: translateY(-1px);
+    }
+
+    .view-details-btn i {
+        font-size: 12px;
+        transition: var(--trans);
+    }
+
+    .view-details-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    /* ====== RESPONSIVE ====== */
+    @@media screen and (max-width: 768px) {
+        .dept-card-header {
+            padding: 12px 12px;
+        }
+
+        .dept-card-body {
+            padding: 12px 12px;
+        }
+
+        .dept-card-stats {
+            padding: 10px 12px;
+        }
+
+        .dept-card-footer {
+            padding: 10px 12px;
+        }
+
+        .info-row {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+        }
+    }
+
+    @@media screen and (max-width: 480px) {
+        .dept-card-header {
+            padding: 12px 12px;
+        }
+
+        .dept-card-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 20px;
+        }
+
+        .dept-card-name {
+            font-size: 14px;
+        }
+
+        .dept-card-body {
+            padding: 12px 12px;
+        }
+
+        .dept-card-stats {
+            padding: 10px 12px;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-box {
+            width: 100%;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stat-box:last-child {
+            border-bottom: none;
+        }
+
+        .stat-divider {
+            display: none;
+        }
+    }
+</style>
