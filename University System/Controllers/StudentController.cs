@@ -83,6 +83,36 @@ namespace University_System.Controllers
             return View(student);
         }
 
+        [HttpPost]
+        public IActionResult Edit(Student student)
+        {
+            var existing = db.Students.Find(student.Id);
+            if (existing == null) return NotFound();
+
+            existing.Name = student.Name;
+            existing.SSN = student.SSN;
+            existing.Email = student.Email;
+            existing.Phone = student.Phone;
+            existing.Address = student.Address;
+            existing.Age = student.Age;
+            existing.DepartmentId = student.DepartmentId;
+
+            if (student.ImageFile != null && student.ImageFile.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + student.ImageFile.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                    student.ImageFile.CopyTo(stream);
+
+                existing.Image = uniqueFileName;
+            }
+
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
         public IActionResult DetailsVm(int id)
         {
             var student = db.Students
@@ -95,6 +125,16 @@ namespace University_System.Controllers
 
             var vm = student.Adapt<StudentDetailsVM>();
             return View(vm);
+        }
+
+
+        public IActionResult Delete(int id)
+        {
+            var student = db.Students.Find(id);
+            if (student == null) return NotFound();
+            db.Students.Remove(student);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

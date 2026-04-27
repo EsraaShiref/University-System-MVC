@@ -145,12 +145,18 @@
                                    class="btn btn-sm btn-icon" title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <button class="btn btn-sm btn-icon btn-icon--edit" title="Edit" disabled>
+                                <a asp-controller="Student" asp-action="Edit"
+                                        asp-route-id="@student.Id"
+                                    class="btn btn-sm btn-icon btn-icon--edit" title="Edit" disabled>
                                     <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-icon btn-icon--delete" title="Delete" disabled>
+                                </a>
+                                <a asp-controller="Student" asp-action="Delete"
+                                   asp-route-id="@student.Id"
+                                    class="btn btn-sm btn-icon btn-icon--delete" title="Delete"
+                                    onclick="return confirm('Delete @student.Name?')"
+                                >
                                     <i class="bi bi-trash3"></i>
-                                </button>
+                                </a>
                             </div>
                         </td>
                     </tr>
