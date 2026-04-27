@@ -1,0 +1,141 @@
+﻿@model University_System.Models.Instructor
+@{
+    ViewData["Title"] = "Add New Instructor";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Add New Instructor</h1>
+        <p class="page-subtitle">Fill in the details below to add a new instructor.</p>
+    </div>
+    <div class="ms-auto">
+        <a asp-controller="Instructor" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row g-4 justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+        <form asp-action="Add">
+
+            <!-- Personal Information -->
+            <div class="content-card mb-4">
+                <div class="content-card-header">
+                    <h5 class="content-card-title">
+                        <i class="bi bi-person-badge me-2 text-primary"></i>Personal Information
+                    </h5>
+                </div>
+                <div class="p-4">
+                    <div class="row g-3">
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Full Name</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-person input-icon"></i>
+                                <input type="text" name="Name" class="form-control form-input-styled"
+                                       placeholder="e.g. Dr. John Smith" required />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Age</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-calendar input-icon"></i>
+                                <input type="number" name="Age" class="form-control form-input-styled"
+                                       placeholder="e.g. 45" required />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Email Address</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-envelope input-icon"></i>
+                                <input type="email" name="Email" class="form-control form-input-styled"
+                                       placeholder="e.g. john@university.edu" required />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Phone Number</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-telephone input-icon"></i>
+                                <input type="text" name="Address" class="form-control form-input-styled"
+                                       placeholder="e.g. +1 555 000 1234" required />
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label-styled">Address</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-geo-alt input-icon"></i>
+                                <input type="text" name="Address" class="form-control form-input-styled"
+                                       placeholder="e.g. 123 Main St, New York" required />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Information -->
+            <div class="content-card mb-4">
+                <div class="content-card-header">
+                    <h5 class="content-card-title">
+                        <i class="bi bi-building me-2 text-primary"></i>Academic Information
+                    </h5>
+                </div>
+                <div class="p-4">
+                    <div class="row g-3">
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Degree</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-mortarboard input-icon"></i>
+                                <input type="text" name="Degree" class="form-control form-input-styled"
+                                       placeholder="e.g. PhD in Computer Science" required />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Salary</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-currency-dollar input-icon"></i>
+                                <input type="number" name="Salary" class="form-control form-input-styled"
+                                       placeholder="e.g. 50000" required step="0.01" />
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label-styled">Department</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-building input-icon"></i>
+                                <select name="DepartmentId" class="form-select form-input-styled form-select-styled" required>
+                                    <option value="">— Select Department —</option>
+                                    @foreach (var dept in ViewBag.Departments)
+                                    {
+                                        <option value="@dept.DepartmentId">@dept.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex gap-3 justify-content-end">
+                <a asp-controller="Instructor" asp-action="Index"
+                       class="btn btn-outline-secondary">
+                    <i class="bi bi-x-lg me-1"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-floppy me-1"></i> Save Instructor
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>

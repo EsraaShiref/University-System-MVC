@@ -1,0 +1,122 @@
+﻿@model List<University_System.ViewModels.CourseViewModel>
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Courses</h1>
+        <p class="page-subtitle">Manage all courses in the university system.</p>
+    </div>
+    <div class="ms-auto">
+        <a asp-action="Add" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Add Course
+        </a>
+    </div>
+</div>
+
+<!-- Courses Table -->
+<div class="content-card">
+    <div class="content-card-header">
+        <h5 class="content-card-title">
+            <i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>All Courses
+        </h5>
+        <span class="ms-auto text-muted small">Total: @Model.Count</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table uni-table mb-0">
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Description</th>
+                    <th>Total Degree</th>
+                    <th>Min Degree</th>
+                    <th>Students</th>
+                    <th>Instructors</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var course in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">@course.Name</div>
+                            </td>
+                            <td>
+                                <span class="text-muted small">
+                                    @(course.Description?.Length > 50 ? course.Description.Substring(0, 50) + "..." : course.Description)
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">@course.TotalDegree</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">@course.MinDegree</span>
+                            </td>
+                            <td>
+                                @{
+                                    var studentCount = course.Students?.Count ?? 0;
+                                }
+                                @if (studentCount > 0)
+                                {
+                                    <span class="courses-badge">
+                                        <i class="bi bi-people me-1"></i>@studentCount
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">0</span>
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    var instructorCount = course.Instructors?.Count ?? 0;
+                                }
+                                @if (instructorCount > 0)
+                                {
+                                    <span class="courses-badge">
+                                        <i class="bi bi-person-workspace me-1"></i>@instructorCount
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">0</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="GetByName" asp-route-name="@course.Name"
+                                           class="btn btn-sm btn-icon" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@course.CourseId"
+                                           class="btn btn-sm btn-icon btn-icon--edit" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@course.CourseId"
+                                           class="btn btn-sm btn-icon btn-icon--delete"
+                                           onclick="return confirm('Are you sure?\n Delete @course.Name');" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            No courses found.
+                            <a asp-action="Add">Add one?</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

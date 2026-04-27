@@ -44,9 +44,10 @@
             <div class="stat-body">
                 <p class="stat-label">Total Courses</p>
                 <h3 class="stat-value">@courseCount</h3>
-                <span class="stat-badge stat-badge--neutral">
-                    <i class="bi bi-dash"></i> This term
-                </span>
+                <a asp-controller="Course" asp-action="Index"
+                       class="stat-badge stat-badge--up text-decoration-none">
+                    <i class="bi bi-arrow-right-short"></i> View all
+                </a>
             </div>
         </div>
     </div>
@@ -69,9 +70,10 @@
             <div class="stat-body">
                 <p class="stat-label">Instructors</p>
                 <h3 class="stat-value">@instructorCount</h3>
-                <span class="stat-badge stat-badge--up">
-                    <i class="bi bi-check2"></i> Active
-                </span>
+                <a asp-controller="Instructor" asp-action="Index" 
+                       class="stat-badge stat-badge--up text-decoration-none">
+                    <i class="bi bi-arrow-right-short"></i> View all
+                </a>
             </div>
         </div>
     </div>

@@ -1,0 +1,147 @@
+﻿@model University_System.Models.Instructor
+@{
+    ViewData["Title"] = "Edit Instructor";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Edit Instructor</h1>
+        <p class="page-subtitle">Update the details for <strong>@Model.Name</strong>.</p>
+    </div>
+    <div class="ms-auto d-flex gap-2">
+        <a asp-controller="Instructor" asp-action="Details" asp-route-id="@Model.InstructorId"
+               class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-eye me-1"></i> View Details
+        </a>
+        <a asp-controller="Instructor" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row g-4 justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="InstructorId" />
+
+            <!-- Personal Information -->
+            <div class="content-card mb-4">
+                <div class="content-card-header">
+                    <h5 class="content-card-title">
+                        <i class="bi bi-pencil me-2 text-primary"></i>Edit Personal Information
+                    </h5>
+                    <span class="ms-auto badge bg-light text-dark">#@Model.InstructorId</span>
+                </div>
+                <div class="p-4">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small mb-3"></div>
+
+                    <div class="row g-3">
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Full Name</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-person input-icon"></i>
+                                <input asp-for="Name" class="form-control form-input-styled" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Age</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-calendar input-icon"></i>
+                                <input type="number" asp-for="Age" class="form-control form-input-styled" />
+                            </div>
+                            <span asp-validation-for="Age" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Email Address</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-envelope input-icon"></i>
+                                <input type="email" asp-for="Email" class="form-control form-input-styled" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label-styled">Address</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-geo-alt input-icon"></i>
+                                <input asp-for="Address" class="form-control form-input-styled" />
+                            </div>
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Information -->
+            <div class="content-card mb-4">
+                <div class="content-card-header">
+                    <h5 class="content-card-title">
+                        <i class="bi bi-building me-2 text-primary"></i>Academic Information
+                    </h5>
+                </div>
+                <div class="p-4">
+                    <div class="row g-3">
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Degree</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-mortarboard input-icon"></i>
+                                <input asp-for="Degree" class="form-control form-input-styled" />
+                            </div>
+                            <span asp-validation-for="Degree" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="form-label-styled">Salary</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-currency-dollar input-icon"></i>
+                                <input type="number" asp-for="Salary" class="form-control form-input-styled" step="0.01" />
+                            </div>
+                            <span asp-validation-for="Salary" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label-styled">Department</label>
+                            <div class="input-icon-wrapper">
+                                <i class="bi bi-building input-icon"></i>
+                                <select asp-for="DepartmentId" class="form-select form-input-styled form-select-styled">
+                                    <option value="">— Select Department —</option>
+                                    @foreach (var dept in ViewBag.Departments)
+                                    {
+                                        <option value="@dept.DepartmentId"
+                                                selected="@(dept.DepartmentId == Model.DepartmentId)">
+                                            @dept.Name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <span asp-validation-for="DepartmentId" class="text-danger small"></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-end">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-lg me-1"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-floppy me-1"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

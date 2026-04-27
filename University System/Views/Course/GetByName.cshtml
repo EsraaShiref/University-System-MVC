@@ -1,0 +1,193 @@
+﻿@model University_System.ViewModels.CourseViewModel
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">@Model.Name</h1>
+        <p class="page-subtitle">Course Information & Details</p>
+    </div>
+    <div class="ms-auto d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.CourseId"
+               class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-pencil me-1"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<!-- Course Information Cards -->
+<div class="row g-4 mb-4">
+    <!-- Basic Info Card -->
+    <div class="col-lg-6">
+        <div class="content-card">
+            <div class="content-card-header">
+                <h5 class="content-card-title">
+                    <i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>Course Information
+                </h5>
+            </div>
+            <div class="p-4">
+                <div class="info-group">
+                    <label class="info-label">Course Name</label>
+                    <p class="info-value">@Model.Name</p>
+                </div>
+                <div class="info-group">
+                    <label class="info-label">Course ID</label>
+                    <p class="info-value"><span class="badge bg-light text-dark">#@Model.CourseId</span></p>
+                </div>
+                <div class="info-group">
+                    <label class="info-label">Description</label>
+                    <p class="info-value">@Model.Description</p>
+                </div>
+                <div class="info-group">
+                    <label class="info-label">Topics</label>
+                    <p class="info-value">@Model.Topics</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Degree Info Card -->
+    <div class="col-lg-6">
+        <div class="content-card">
+            <div class="content-card-header">
+                <h5 class="content-card-title">
+                    <i class="bi bi-percent me-2 text-primary"></i>Grading Information
+                </h5>
+            </div>
+            <div class="p-4">
+                <div class="info-group">
+                    <label class="info-label">Total Degree</label>
+                    <p class="info-value">
+                        <span class="badge bg-light text-dark">@Model.TotalDegree</span>
+                    </p>
+                </div>
+                <div class="info-group">
+                    <label class="info-label">Minimum Degree</label>
+                    <p class="info-value">
+                        <span class="badge bg-light text-dark">@Model.MinDegree</span>
+                    </p>
+                </div>
+                <div class="info-group">
+                    <label class="info-label">Passing Percentage</label>
+                    <p class="info-value">
+                        <span class="badge bg-light text-dark">@((Model.MinDegree / (double)Model.TotalDegree * 100).ToString("F1"))%</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Students Enrolled -->
+@if (Model.Students != null && Model.Students.Any())
+{
+    <div class="content-card mb-4">
+        <div class="content-card-header">
+            <h5 class="content-card-title">
+                <i class="bi bi-people me-2 text-primary"></i>Enrolled Students
+            </h5>
+            <span class="ms-auto text-muted small">@Model.Students.Count student(s)</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table uni-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Grade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var student in Model.Students)
+                    {
+                        <tr>
+                            <td>
+                                <span class="text-muted small">@student.StudentId</span>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">@student.StudentName</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">@student.Grade</span>
+                            </td>
+                            <td>
+                                @if (student.Grade >= Model.MinDegree)
+                                {
+                                    <span class="status-badge status-badge--active">Passed</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-badge--inactive">Failed</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="content-card mb-4">
+        <div class="p-4 text-center text-muted">
+            <i class="bi bi-info-circle me-2"></i>
+            <span>No students enrolled in this course.</span>
+        </div>
+    </div>
+}
+
+<!-- Instructors -->
+@if (Model.Instructors != null && Model.Instructors.Any())
+{
+    <div class="content-card">
+        <div class="content-card-header">
+            <h5 class="content-card-title">
+                <i class="bi bi-person-workspace me-2 text-primary"></i>Assigned Instructors
+            </h5>
+            <span class="ms-auto text-muted small">@Model.Instructors.Count instructor(s)</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table uni-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Instructor ID</th>
+                        <th>Instructor Name</th>
+                        <th>Hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var instructor in Model.Instructors)
+                    {
+                        <tr>
+                            <td>
+                                <span class="text-muted small">@instructor.InstructorId</span>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">@instructor.InstructorName</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info text-white">@instructor.Hours hrs</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="content-card">
+        <div class="p-4 text-center text-muted">
+            <i class="bi bi-info-circle me-2"></i>
+            <span>No instructors assigned to this course.</span>
+        </div>
+    </div>
+}
